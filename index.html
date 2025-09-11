@@ -251,8 +251,8 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="script.js"></script>
-  <!-- Inline backup script to ensure countdown and smooth scrolling still work if external files fail to load -->
+  <!-- All necessary JavaScript has been consolidated into this inline script. We removed
+       the external script.js reference to avoid loading deprecated RSVP deadline logic. -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Smooth scrolling for nav links
@@ -302,6 +302,21 @@
         }
         updateCountdown();
         setInterval(updateCountdown, 1000);
+      }
+
+      // Show the current guest count using CountAPI
+      const guestCounterEl = document.getElementById('guestCounter');
+      if (guestCounterEl) {
+        fetch('https://api.countapi.xyz/get/hanya_mostafa_wedding/guestCount')
+          .then((res) => res.json())
+          .then((data) => {
+            guestCounterEl.style.display = 'inline-block';
+            guestCounterEl.textContent = 'Confirmed Guests: ' + (data.value ?? 0);
+          })
+          .catch(() => {
+            // Hide the badge if the counter hasn't been created yet or fails
+            guestCounterEl.style.display = 'none';
+          });
       }
 
       // If the page was redirected back from FormSubmit with a success flag, display a thank you message
@@ -361,6 +376,15 @@
               }
             }
           }, 500);
+        });
+      }
+
+      // Mobile navigation toggle (hamburger menu)
+      const navToggle = document.querySelector('.nav-toggle');
+      const nav = document.querySelector('.nav');
+      if (navToggle && nav) {
+        navToggle.addEventListener('click', () => {
+          nav.classList.toggle('open');
         });
       }
     });
